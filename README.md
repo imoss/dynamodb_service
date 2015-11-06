@@ -1,5 +1,5 @@
 ## DynamoDb Service
-Example micro-service for managing data stored in DynamoDb
+Example micro-service for managing data stored in DynamoDb using Sinatra
 
 ## Tests
 
