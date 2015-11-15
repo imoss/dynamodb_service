@@ -1,5 +1,5 @@
 class Comment
-  include DynamoDbInteractor
+  include Dynamodel
 
   def self.fields
     [:id, :commenter, :body]
