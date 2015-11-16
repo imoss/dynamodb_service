@@ -1,16 +1,9 @@
 class Comment
   include Dynamodel
 
-  def self.fields
-    [:id, :commenter, :body]
-  end
+  table "Comments", read_capacity: 10, write_capacity: 5
 
-  def self.table
-    {
-      table_name: "Comments",
-      attribute_definitions: [{ attribute_name: "id", attribute_type: "S" }],
-      key_schema: [{ attribute_name: "id", key_type: "HASH" }],
-      provisioned_throughput: { read_capacity_units: 10, write_capacity_units: 5 }
-    }
-  end
+  key :id, key_type: "HASH", attribute_type: "S"
+  field :commenter
+  field :body
 end

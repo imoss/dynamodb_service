@@ -8,17 +8,17 @@ module Dynamodel
   def initialize(hash={})
     self.class.fields.each do |field|
       self.class.send(:attr_accessor, field)
-      self.send("#{field}=", hash[field])
+      send("#{field}=", hash[field])
     end
   end
 
   def destroy
-    db.delete_item(table_name: self.class.table_name, key: keys)
+    db.delete_item(table_name: table_name, key: key_values)
   end
 
   def save
     run_callbacks :save do
-      db.put_item(table_name: self.class.table_name, item: attributes)
+      db.put_item(table_name: table_name, item: attributes)
     end
   end
 
@@ -44,11 +44,11 @@ module Dynamodel
     self.class.db
   end
 
-  def key_names
-    self.class.key_schema.map { |k| k[:attribute_name] }
+  def key_values
+    self.class.keys.inject({}) { |h, k| h.merge!(k => send(k)); h }
   end
 
-  def keys
-    key_names.inject({}) { |h, k| h.merge!(k => send(k)); h }
+  def table_name
+    self.class.table_name
   end
 end
