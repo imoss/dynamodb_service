@@ -5,6 +5,8 @@ module Dynamodel
     @@keys = []
     @@key_schema = []
 
+    # TODO: find a way to use attr_reader for getters
+
     def attribute_definitions
       @@attribute_definitions
     end
