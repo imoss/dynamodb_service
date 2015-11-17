@@ -1,6 +1,14 @@
 module Dynamodel
   module Document
     module ClassMethods
+      mattr_reader :attribute_definitions,
+                   :fields,
+                   :keys,
+                   :key_schema,
+                   :read_capacity,
+                   :table_name,
+                   :write_capacity
+
       @@attribute_definitions = []
       @@fields = []
       @@keys = []
@@ -60,36 +68,6 @@ module Dynamodel
             write_capacity_units: write_capacity
           }
         }
-      end
-
-      # TODO: find a way to use attr_reader for getters
-
-      def attribute_definitions
-        @@attribute_definitions
-      end
-
-      def read_capacity
-        @@read_capacity
-      end
-
-      def write_capacity
-        @@write_capacity
-      end
-
-      def table_name
-        @@table_name
-      end
-
-      def fields
-        @@fields
-      end
-
-      def keys
-        @@keys
-      end
-
-      def key_schema
-        @@key_schema
       end
     end
   end
