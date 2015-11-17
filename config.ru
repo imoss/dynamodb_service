@@ -11,4 +11,4 @@ require_all 'models'
 require_all 'helpers'
 require_all 'controllers'
 
-map('/v1/comments') { run CommentsController }
+map('/v1/users') { run UsersController }

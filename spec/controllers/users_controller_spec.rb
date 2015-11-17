@@ -1,10 +1,10 @@
 require File.expand_path('../../spec_helper', __FILE__)
 
-describe CommentsController do
-  before(:each) { Comment.create_table }
-  after(:each) { Comment.delete_table }
+describe UsersController do
+  before(:each) { User.create_table }
+  after(:each) { User.delete_table }
 
-  describe "GET /v1/comments/:id" do
+  describe "GET /v1/users/:id" do
     let(:base) { "/#{id}" }
 
     context "record does not exist" do
@@ -26,7 +26,7 @@ describe CommentsController do
       let(:id) { "2" }
 
       before do
-        Comment.create(id: id, body: "test")
+        User.create(id: id, name: "test")
         get(base)
       end
 
@@ -36,12 +36,12 @@ describe CommentsController do
 
       it 'should return correct record' do
         expect(parsed_response['id']).to eq('2')
-        expect(parsed_response['body']).to eq('test')
+        expect(parsed_response['name']).to eq('test')
       end
     end
   end
 
-  describe "DELETE /v1/comments/:id" do
+  describe "DELETE /v1/users/:id" do
     let(:base) { "/#{id}" }
 
     context "record does not exist" do
@@ -63,7 +63,7 @@ describe CommentsController do
       let(:id) { "2" }
 
       before do
-        Comment.create(id: id, body: "test")
+        User.create(id: id, body: "test")
         delete(base)
       end
 
@@ -72,19 +72,19 @@ describe CommentsController do
       end
 
       it 'should return correct record' do
-        expect(Comment.find(id: id)).to be_nil
+        expect(User.find(id: id)).to be_nil
       end
     end
   end
 
-  describe "POST /v1/comments/:id" do
+  describe "POST /v1/users/:id" do
     let(:base) { "/" }
-    let(:body) { { comment: { body: "SomethingElse" } }.to_json }
+    let(:body) { { user: { name: "SomethingElse" } }.to_json }
     let(:content_type) { {'CONTENT_TYPE' => 'application/json'} }
     let(:parsed_response) { JSON.parse(last_response.body) }
 
     before do
-      allow(Comment).to receive(:generate_identifier) { "1234567890" }
+      allow(User).to receive(:generate_identifier) { "1234567890" }
       post(base, body, content_type)
     end
 
@@ -97,13 +97,13 @@ describe CommentsController do
     end
 
     it 'should update the record' do
-      expect(parsed_response['body']).to eq("SomethingElse")
+      expect(parsed_response['name']).to eq("SomethingElse")
     end
   end
 
-  describe "PUT /v1/comments/:id" do
+  describe "PUT /v1/users/:id" do
     let(:base) { "/#{id}" }
-    let(:body) { { comment: { id: "3", body: "SomethingElse" } }.to_json }
+    let(:body) { { user: { id: "3", name: "SomethingElse" } }.to_json }
     let(:content_type) { {'CONTENT_TYPE' => 'application/json'} }
     let(:id) { "2" }
     let(:parsed_response) { JSON.parse(last_response.body) }
@@ -126,7 +126,7 @@ describe CommentsController do
 
     context 'record does exist' do
       before do
-        Comment.create(id: id, body: "test", commenter: "SomeGuid")
+        User.create(id: id, name: "SomeGuid")
         put(base, body, content_type)
       end
 
@@ -136,8 +136,7 @@ describe CommentsController do
 
       it 'should update the record' do
         expect(parsed_response['id']).to eq("3")
-        expect(parsed_response['body']).to eq("SomethingElse")
-        expect(parsed_response['commenter']).to eq("SomeGuid")
+        expect(parsed_response['name']).to eq("SomethingElse")
       end
     end
   end
