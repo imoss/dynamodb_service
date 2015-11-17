@@ -13,7 +13,9 @@ module Dynamodel
   end
 
   def destroy
-    db.delete_item(table_name: table_name, key: key_values)
+    run_callbacks :destroy do
+      db.delete_item(table_name: table_name, key: key_values)
+    end
   end
 
   def save
