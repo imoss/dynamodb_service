@@ -1,4 +1,4 @@
-require File.expand_path('../../spec_helper.rb', __FILE__)
+require File.expand_path('../../spec_helper', __FILE__)
 
 describe CommentsController do
   before(:each) { Comment.create_table }
@@ -77,45 +77,14 @@ describe CommentsController do
     end
   end
 
-  describe "PUT /v1/comments/:id" do
-    let(:base) { "/#{id}" }
-
-    context "record does not exist" do
-      let(:id) { "NotAnID" }
-
-      before { get(base) }
-
-      it 'should return 500' do
-        expect(last_response.status).to eq(500)
-      end
-    end
-
-    context "record does exist" do
-      let(:parsed_response) { JSON.parse(last_response.body) }
-      let(:id) { "2" }
-
-      before do
-        Comment.create(id: id, body: "test")
-        delete(base)
-      end
-
-      it 'should return 200' do
-        expect(last_response.status).to eq(200)
-      end
-
-      it 'should return correct record' do
-        expect(Comment.find(id: id)).to be_nil
-      end
-    end
-  end
-
   describe "POST /v1/comments/:id" do
     let(:base) { "/" }
-    let(:body) { { comment: { id: "1", body: "SomethingElse" } }.to_json }
+    let(:body) { { comment: { body: "SomethingElse" } }.to_json }
     let(:content_type) { {'CONTENT_TYPE' => 'application/json'} }
     let(:parsed_response) { JSON.parse(last_response.body) }
 
     before do
+      allow(Comment).to receive(:generate_identifier) { "1234567890" }
       post(base, body, content_type)
     end
 
@@ -123,15 +92,18 @@ describe CommentsController do
       expect(last_response.status).to eq(200)
     end
 
+    it 'generates a unique id' do
+      expect(parsed_response['id']).to eq("1234567890")
+    end
+
     it 'should update the record' do
-      expect(parsed_response['id']).to eq("1")
       expect(parsed_response['body']).to eq("SomethingElse")
     end
   end
 
-  describe "UPDATE /v1/comments/:id" do
+  describe "PUT /v1/comments/:id" do
     let(:base) { "/#{id}" }
-    let(:body) { { comment: { id: id, body: "SomethingElse" } }.to_json }
+    let(:body) { { comment: { id: "3", body: "SomethingElse" } }.to_json }
     let(:content_type) { {'CONTENT_TYPE' => 'application/json'} }
     let(:id) { "2" }
     let(:parsed_response) { JSON.parse(last_response.body) }
@@ -142,8 +114,6 @@ describe CommentsController do
       end
 
       let(:id) { "NotAnID" }
-
-      before { get(base) }
 
       it 'should return 500' do
         expect(last_response.status).to eq(500)
@@ -165,7 +135,7 @@ describe CommentsController do
       end
 
       it 'should update the record' do
-        expect(parsed_response['id']).to eq(id)
+        expect(parsed_response['id']).to eq("3")
         expect(parsed_response['body']).to eq("SomethingElse")
         expect(parsed_response['commenter']).to eq("SomeGuid")
       end
