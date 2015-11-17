@@ -1,5 +1,5 @@
 class Comment
-  include Dynamodel
+  include Dynamodel::Document
 
   table "Comments", read_capacity: 10, write_capacity: 5
 
